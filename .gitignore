@@ -1,0 +1,58 @@
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+.envrc
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Model artifacts (do not commit; pull from HuggingFace)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+checkpoints/
+runs/
+logs/
+wandb/
+
+# Data caches
+data_cache/
+hf_cache/
+.cache/
+*.parquet
+*.arrow
+
+# Modal / local secrets
+.modal/
+.hf-token
+.huggingface/
+
+# OS junk
+Thumbs.db
+*.tmp
