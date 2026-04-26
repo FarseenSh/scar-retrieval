@@ -140,13 +140,14 @@ Each `data/` and `scripts/` subdirectory has its own README with detailed CLI fl
 
 ## Datasets and Weights
 
-All public on HuggingFace:
+All public on HuggingFace. **Single landing page**: [HuggingFace Collection — SCAR](https://huggingface.co/collections/Farseen0/scar-sparse-code-audit-retriever)
 
 | Resource | HuggingFace |
 |---|---|
 | Model weights (sae + scar-25ep + scar-15ep) | [`Farseen0/scar-weights`](https://huggingface.co/Farseen0/scar-weights) |
 | Retrieval corpus (231,269 contracts) | [`Farseen0/scar-corpus`](https://huggingface.co/datasets/Farseen0/scar-corpus) |
 | Training pairs (7,552 curated) | [`Farseen0/scar-pairs`](https://huggingface.co/datasets/Farseen0/scar-pairs) |
+| Training pairs (extended, 11,961) | [`Farseen0/scar-pairs-extended`](https://huggingface.co/datasets/Farseen0/scar-pairs-extended) |
 | Evaluation set (838 held-out) | [`Farseen0/scar-eval`](https://huggingface.co/datasets/Farseen0/scar-eval) |
 
 ## Limitations
