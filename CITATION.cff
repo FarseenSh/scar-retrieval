@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use SCAR in your research or production system, please cite the paper below."
+title: "SCAR: Sparse Code Audit Retriever via SAE-LoRA Adaptation"
+authors:
+  - family-names: Shaikh
+    given-names: Farseen
+year: 2026
+license: Apache-2.0
+url: "https://github.com/FarseenSh/scar-retrieval"
+repository-code: "https://github.com/FarseenSh/scar-retrieval"
+preferred-citation:
+  type: conference-paper
+  title: "SCAR: Sparse Code Audit Retriever via SAE-LoRA Adaptation"
+  authors:
+    - family-names: Shaikh
+      given-names: Farseen
+  year: 2026
+  notes: "Under review at EMNLP 2026 (ACL ARR March cycle)"
+  url: "https://openreview.net/forum?id=moD8Hxq9hN"
