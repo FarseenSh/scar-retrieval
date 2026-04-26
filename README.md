@@ -27,6 +27,24 @@ The technical contribution is **SAE-LoRA**: a low-rank adaptation of the frozen 
 
 All gains over BM25 statistically significant at *p* < 0.0001 (paired bootstrap, n = 10,000).
 
+### Visual Summary
+
+![Standalone retrieval comparison](assets/01_main_results.png)
+
+*SCAR achieves R@10 = 0.977 on the 838-pair held-out evaluation, surpassing BM25 (0.689) and the next-best learned sparse method (SPLADE-Qwen, 0.963). The frozen-SAE baseline scores 0.026 — barely above random (0.012) — confirming that SAE-LoRA, not the SAE alone, drives retrieval discrimination.*
+
+![Full-corpus retrieval](assets/02_full_corpus.png)
+
+*Retrieval at scale: when the corpus expands from 838 to 232,107 documents (a 277× increase), BM25 collapses (0.689 → 0.308) but SCAR's sparse semantic features remain robust (0.977 → 0.901). The SAE advantage over SPLADE-Qwen widens at full scale, indicating SAE features are more discriminative against corpus-scale distractors than vocabulary-space representations.*
+
+![EVMBench out-of-distribution](assets/03_evmbench.png)
+
+*Out-of-distribution evaluation on EVMBench (an independent benchmark of 82 high-severity findings across 22 real audit contests). The 15-epoch SCAR + BM25 hybrid achieves the strongest results, surpassing BM25 on every metric: P@10 = 0.535 (+0.037), Coverage = 0.756 (+0.036), MRR = 0.637 (+0.065).*
+
+![Training duration](assets/04_epoch_scaling.png)
+
+*Extended training improves SCAR monotonically with no overfitting on in-distribution data. Both standalone and hybrid scores rise from 5 → 25 epochs, while document-level sparsity tightens (mean active features per document drops from ~152 to ~115). The 15-epoch checkpoint trades a small in-distribution drop for substantially better OOD coverage on EVMBench.*
+
 ## Quick Start
 
 ```python
