@@ -9,11 +9,11 @@ license: Apache-2.0
 url: "https://github.com/FarseenSh/scar-retrieval"
 repository-code: "https://github.com/FarseenSh/scar-retrieval"
 preferred-citation:
-  type: conference-paper
+  type: generic
   title: "SCAR: Sparse Code Audit Retriever via SAE-LoRA Adaptation"
   authors:
     - family-names: Shaikh
       given-names: Farseen
   year: 2026
-  notes: "Under review at EMNLP 2026 (ACL ARR March cycle)"
-  url: "https://openreview.net/forum?id=moD8Hxq9hN"
+  notes: "Preprint; corrected version October 2026. See the README's Known issue note."
+  url: "https://github.com/FarseenSh/scar-retrieval"
