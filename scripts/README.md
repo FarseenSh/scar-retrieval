@@ -43,7 +43,7 @@ Trains a JumpReLU SAE on Layer 19 residual stream activations from Qwen2.5-Coder
 | Threshold initialization | 0.1 |
 | Target L0 | 37 |
 
-The SAE achieves variance explained ≈ 0.97 at convergence with mean L0 ≈ 37 active features per token. Final checkpoint is uploaded to `scar-weights/sae/checkpoint_final.pt`.
+**Correction (September 2026).** The SAE is live for the first three quarters of training (L0 ≈ 18 → 11, variance explained ≈ 0.96) and then collapses as λ_s reaches its final value: the checkpoint uploaded to `scar-weights/sae/checkpoint_final.pt` has encoder column norms ≈ 1e-5 and one feature able to clear its threshold (the trainer's own final metrics record L0 = 0.59, VE ≈ 0.96 from the decoder bias alone). The earlier "VE ≈ 0.97 with L0 ≈ 37" describes the calibration run, not this checkpoint. The retrieval pipeline never applies the JumpReLU thresholds, which is why it kept working. Use an earlier checkpoint (25 % of training) or a public TopK SAE for any experiment that depends on a live dictionary; the corrected preprint (October 2026) documents this.
 
 ### `step6_retrieval.py` — Retrieval Fine-Tuning
 
@@ -68,7 +68,7 @@ Jointly trains backbone LoRA (rank 64 on Q/K/V/O) and SAE-LoRA (rank 256 on the 
 | DF-FLOPS λ | 1e-6 |
 | Attention | Bidirectional |
 
-The `--epochs` flag controls training length. The published checkpoints are at 15 and 25 epochs. Final checkpoints upload to `scar-weights/scar-15ep/` and `scar-weights/scar-25ep/`.
+The `--epochs` flag controls training length. The published checkpoints are at 15 and 25 epochs. Final checkpoints upload to `scar-weights/scar-15ep/` and `scar-weights/scar-25ep/`. Note (September 2026): on a training pool that is disjoint from the evaluation set, accuracy peaks around a quarter of this schedule and declines afterwards; the 25-epoch setting was tuned on a leaked split. See the repository README's Known issue.
 
 ### `step8_evmbench.py` — Out-of-Distribution Evaluation
 
