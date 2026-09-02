@@ -1,11 +1,21 @@
 # SCAR: Sparse Code Audit Retriever
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Paper](https://img.shields.io/badge/paper-OpenReview-b31b1b.svg)](https://openreview.net/forum?id=moD8Hxq9hN)
 [![Model](https://img.shields.io/badge/%F0%9F%A4%97-Model-yellow)](https://huggingface.co/Farseen0/scar-weights)
 [![Datasets](https://img.shields.io/badge/%F0%9F%A4%97-Datasets-yellow)](https://huggingface.co/Farseen0)
 
 > The first sparse latent retriever for smart contract security auditing — built on **SAE-LoRA**, a parameter-efficient adaptation of frozen Sparse Autoencoder features that turns reconstruction-oriented latents into retrieval-discriminative ones.
+
+---
+
+## Known issue (September 2026) — read before using the numbers below
+
+Two problems were found in this release during follow-up work. Both are documented in full in the corrected preprint (October 2026); this note is here so nobody builds on the wrong numbers in the meantime.
+
+1. **Evaluation contamination.** `scar-eval` overlaps `scar-pairs`: 800 of its 838 (query, positive) pairs appear verbatim in the training set, and all 838 evaluation positives appear as training positives. The report-level split and hash check described in the dataset cards did not catch this. Every number reported against `scar-eval` by a model trained on `scar-pairs` — including the tables and figures below — measures memorisation, not retrieval. A rebuilt, disjoint training pool (`scar-pairs-clean`, 6,202 pairs, document-level removal of every evaluation target and hard negative) and a held-out, time-split test set ship with the corrected preprint.
+2. **The shipped SAE is collapsed.** Under its own JumpReLU thresholds, `sae/checkpoint_final.pt` has one feature able to activate (the trainer's own final metrics record L0 = 0.59); the encoder decayed during the last quarter of SAE training while the retriever kept working because its pipeline never applies the thresholds. The retriever's sparse code is produced by the backbone LoRA and the SAE-LoRA adapter, not by a preserved feature dictionary: a random-direction encoder with the same column norms reproduces the accuracy, and no feature keeps its top-activating documents after adaptation. The interpretability claims in this README ("without modifying the SAE's learned feature dictionary", feature-level explanations) are withdrawn.
+
+What stands: the retrieval pipeline and code, the corpus and pair datasets (with the caveat above), and the inverted-index efficiency results. What follows in October 2026: corrected numbers on the clean split and the held-out test set, early-stopped checkpoints, a second backbone with a live public dictionary (Qwen3-1.7B + Qwen-Scope), and released weights.
 
 ---
 
@@ -16,6 +26,8 @@ SCAR retrieves vulnerable Solidity code given a natural-language audit finding (
 The technical contribution is **SAE-LoRA**: a low-rank adaptation of the frozen SAE encoder weights that adapts which features fire during retrieval without modifying the SAE's learned feature dictionary. With only 4.6M additional parameters (~0.3% of the backbone), SAE-LoRA improves standalone R@10 from 0.026 (frozen SAE) to **0.977** on controlled evaluation — a 37.6× improvement — and maintains R@10=0.901 when retrieving against the full 232k-document corpus, while BM25 collapses to 0.308.
 
 ## Headline Results
+
+*All numbers in this section were measured on the leaked split — see the Known issue above. They are kept for the record and are superseded by the October 2026 release.*
 
 | Metric | BM25 | SPLADE-Qwen | **SCAR-25ep** | **SCAR-15ep** |
 |---|---:|---:|---:|---:|
@@ -170,6 +182,7 @@ All public on HuggingFace. **Single landing page**: [HuggingFace Collection — 
 
 ## Limitations
 
+- **Evaluation and SAE**: see the Known issue at the top; the reported accuracy numbers measure memorisation and the shipped SAE is collapsed.
 - **Single backbone**: only Qwen2.5-Coder-1.5B is verified; transfer to other code models is untested.
 - **OOD generalization**: the 25-epoch model under-covers EVMBench vs BM25 standalone — use the 15-epoch checkpoint or BM25 hybrid for open-domain deployment.
 - **Solidity / EVM only**: other smart contract languages (Move, Sway, Vyper, Cairo) are out of distribution.
@@ -177,7 +190,7 @@ All public on HuggingFace. **Single landing page**: [HuggingFace Collection — 
 
 ## Roadmap
 
-The current release covers the techniques and results in the EMNLP submission. Next directions, ordered by user-facing impact:
+The current release covers the techniques and results of the April 2026 manuscript; a corrected release accompanies the October 2026 preprint. Next directions, ordered by user-facing impact:
 
 1. **Auditor-tool integrations** — Foundry, Hardhat, and Slither plugins that surface SCAR retrievals inline during real audit workflows.
 2. **Cross-language transfer** — extend SAE-LoRA to Move, Sway, Vyper, and Cairo using the same backbone-frozen pipeline; verify whether SAE-LoRA generalizes across smart contract languages.
@@ -188,12 +201,12 @@ The current release covers the techniques and results in the EMNLP submission. N
 ## Citation
 
 ```bibtex
-@inproceedings{shaikh2026scar,
+@misc{shaikh2026scar,
   title  = {SCAR: Sparse Code Audit Retriever via SAE-LoRA Adaptation},
   author = {Shaikh, Farseen},
   year   = {2026},
-  note   = {Under review at EMNLP 2026 (ACL ARR March cycle)},
-  url    = {https://openreview.net/forum?id=moD8Hxq9hN}
+  note   = {Preprint; corrected version October 2026},
+  url    = {https://github.com/FarseenSh/scar-retrieval}
 }
 ```
 
