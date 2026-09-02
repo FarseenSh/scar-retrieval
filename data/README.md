@@ -2,6 +2,8 @@
 
 The four scripts in this folder build the SCAR datasets from public sources. Each script runs on Modal Labs and pushes its output to HuggingFace.
 
+> **Known issue (September 2026).** The evaluation set produced by these pipelines is not disjoint from the training pairs: all 838 `scar-eval` positives appear as training positives in `scar-pairs`, and 800 of the 838 (query, positive) pairs appear verbatim. The report-level holdout and the SHA-256 check described below operated on the wrong unit (they compared normalised source across a split that shared the underlying findings). Numbers measured on `scar-eval` by models trained on `scar-pairs` measure memorisation. A rebuilt training pool with document-level removal of every evaluation target and hard negative (`scar-pairs-clean`, 6,202 pairs) and a held-out, time-split test set are released with the corrected preprint in October 2026.
+
 | Script | Purpose | Output (HuggingFace) |
 |---|---|---|
 | `pipeline.py` | Original 9-source pipeline | `scar-corpus`, base pairs, base eval |
@@ -67,7 +69,7 @@ Each pair: `(query, positive, hard_negative, source, severity, vuln_type)` where
 
 ## Why two pair datasets?
 
-`scar-pairs` (7,552 curated) is what all production checkpoints train on. `scar-pairs-extended` (11,961) includes Solodit API expansions and lower-quality sources that were ablated during development. The paper shows that extending to 17,578 pairs *decreased* R@10 from 0.876 to 0.798 — a clear case of data quality > quantity. The extended set is published for transparency, not as the recommended training data.
+`scar-pairs` (7,552 curated) is what all production checkpoints train on. `scar-pairs-extended` (11,961) includes Solodit API expansions and lower-quality sources that were ablated during development. The paper shows that extending to 17,578 pairs *decreased* R@10 from 0.876 to 0.798 — a clear case of data quality > quantity. The extended set is published for transparency, not as the recommended training data. (That comparison was made on the leaked split and is being re-evaluated; see the Known issue above.)
 
 ## Modal Setup
 
@@ -82,4 +84,4 @@ See `../scripts/README_modal.md` for complete Modal setup.
 
 - The `pipeline.py` script consumes the `slither-audited` `big-multilabel` config (not the default config); using the default produces a much smaller corpus.
 - FORGE-Curated VFP matching uses a regex-based join; the original pipeline yielded only 66 pairs before a regex fix (now 694 pairs from FORGE-Curated alone).
-- The 838-pair evaluation set is built with **report-level** holdout (not finding-level), and SHA-256 hashes on normalized source confirm zero code overlap across train/eval.
+- The 838-pair evaluation set was built with a report-level holdout and a SHA-256 check on normalised source. **That check did not establish disjointness** — see the Known issue at the top. The rebuild (`rebuild_split.py` in the research repository) removes, by document hash, every pair whose positive or hard negative equals any evaluation target, and verifies zero overlap on both axes before publishing.
